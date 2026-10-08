@@ -28,7 +28,7 @@ jobs:
           files: docs
           fail_on_error: true
 
-    artie:
+  artie:
     name: Docs quality check (artie)
     runs-on: ubuntu-latest
     # Report-only to start. Once you know where pages score, remove
