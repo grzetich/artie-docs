@@ -1,0 +1,47 @@
+name: Docs checks
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-links:
+    name: Build and link check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      # onBrokenLinks: 'throw' in docusaurus.config.js makes this step fail on broken links.
+      - run: npm run build
+
+  vale:
+    name: Style check (Vale)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: errata-ai/vale-action@reviewdog
+        with:
+          files: docs
+          fail_on_error: true
+
+  artie:
+    name: Example spec check (artie)
+    runs-on: ubuntu-latest
+    # Report-only to start. Once you know where the examples score, remove
+    # continue-on-error and add --fail-under to the commands below.
+    continue-on-error: true
+    steps:
+      - run: pipx install artie-cli
+      - name: Check example specs referenced in the docs
+        run: |
+          BASE=https://raw.githubusercontent.com/grzetich/artie-cli/main/examples
+          artie check $BASE/bookclub-openapi.yaml --no-generation --output json > artie-bookclub.json
+          artie check $BASE/sample-openapi.yaml --no-generation --output json > artie-sample.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artie-reports
+          path: artie-*.json
