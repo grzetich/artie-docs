@@ -10,9 +10,9 @@ const config = {
   favicon: 'img/favicon.ico',
 
   url: 'https://grzetich.github.io',
-  baseUrl: '/artie-cli-docs/',
+  baseUrl: '/artie-docs/',
   organizationName: 'grzetich',
-  projectName: 'artie-cli-docs',
+  projectName: 'artie-docs',
   trailingSlash: false,
 
   // Broken links fail the build, so CI catches them before merge.
@@ -35,7 +35,7 @@ const config = {
           // Delete src/pages/index.js from the scaffold or the build will conflict.
           routeBasePath: '/',
           sidebarPath: './sidebars.js',
-          editUrl: 'https://github.com/grzetich/artie-cli-docs/tree/main/',
+          editUrl: 'https://github.com/grzetich/artie-docs/tree/main/',
         },
         blog: false,
         theme: { customCss: './src/css/custom.css' },
