@@ -10,4 +10,4 @@ Stainless
 YAML
 JSON
 CLI
-Jokin'
+(?i)jokin
