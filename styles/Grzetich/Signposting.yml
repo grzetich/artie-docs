@@ -1,0 +1,14 @@
+# Signposting and guided-tour phrasing that adds words without information.
+extends: existence
+message: "Cut the signposting: '%s'."
+level: warning
+ignorecase: true
+tokens:
+  - worth noting
+  - it's worth
+  - key takeaway
+  - here's what
+  - here's why
+  - here's the thing
+  - let's dive in
+  - dive into

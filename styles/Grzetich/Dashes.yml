@@ -1,0 +1,8 @@
+# House style: no em or en dashes.
+extends: existence
+message: "Use a comma or rephrase instead of a dash."
+level: error
+nonword: true
+tokens:
+  - '—'
+  - '–'

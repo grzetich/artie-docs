@@ -1,0 +1,29 @@
+# Words that read as AI-generated filler in technical prose.
+extends: existence
+message: "'%s' reads as AI filler. Use a plainer word."
+level: error
+ignorecase: true
+tokens:
+  - leverage
+  - leverages
+  - leveraging
+  - robust
+  - seamless
+  - seamlessly
+  - pivotal
+  - delve
+  - delves
+  - fundamentally
+  - straightforward
+  - utilize
+  - utilizes
+  - utilizing
+  - facilitate
+  - facilitates
+  - encompass
+  - encompasses
+  - myriad
+  - plethora
+  - reframe
+  - nuanced
+  - paradigm
