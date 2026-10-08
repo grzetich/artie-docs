@@ -28,20 +28,47 @@ jobs:
           files: docs
           fail_on_error: true
 
-  artie:
-    name: Example spec check (artie)
+    artie:
+    name: Docs quality check (artie)
     runs-on: ubuntu-latest
-    # Report-only to start. Once you know where the examples score, remove
-    # continue-on-error and add --fail-under to the commands below.
+    # Report-only to start. Once you know where pages score, remove
+    # continue-on-error and add --fail-under to the check command.
     continue-on-error: true
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
       - run: pipx install artie-cli
-      - name: Check example specs referenced in the docs
+
+      - name: Serve the built site
         run: |
-          BASE=https://raw.githubusercontent.com/grzetich/artie-cli/main/examples
-          artie check $BASE/bookclub-openapi.yaml --no-generation --output json > artie-bookclub.json
-          artie check $BASE/sample-openapi.yaml --no-generation --output json > artie-sample.json
+          npx docusaurus serve --port 3000 --no-open &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:3000/artie-docs/ > /dev/null && break
+            sleep 1
+          done
+
+      - name: Check every page in the sitemap
+        run: |
+          mkdir -p artie-reports
+          URLS=$(grep -o '<loc>[^<]*</loc>' build/sitemap.xml \
+            | sed -e 's#<loc>##' -e 's#</loc>##' \
+                  -e 's#https://grzetich.github.io#http://localhost:3000#')
+          for URL in $URLS; do
+            NAME=$(echo "$URL" | sed -e 's#.*/artie-docs/##' -e 's#/#-#g')
+            NAME=${NAME:-index}
+            echo "## ${URL#http://localhost:3000}" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            artie check "$URL" >> $GITHUB_STEP_SUMMARY 2>&1 || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            artie check "$URL" --output json > "artie-reports/$NAME.json" 2>/dev/null || true
+          done
+
       - uses: actions/upload-artifact@v4
         with:
           name: artie-reports
-          path: artie-*.json
+          path: artie-reports/
